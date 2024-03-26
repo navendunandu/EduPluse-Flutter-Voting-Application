@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:edupulse/login.dart';
 
-class splashscreen extends StatefulWidget {
-  const splashscreen({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<splashscreen> createState() => _splashscreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _splashscreenState extends State<splashscreen> {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();

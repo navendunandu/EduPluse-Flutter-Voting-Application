@@ -51,34 +51,36 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
   }
 
   Future<void> cgVoteCheck() async {
-     try {
-    final user = FirebaseAuth.instance.currentUser;
-    final userId = user?.uid;
-    QuerySnapshot<Map<String, dynamic>> studentSnapshot = await FirebaseFirestore.instance
-        .collection('tbl_studentregister')
-        .where('Student_id', isEqualTo: userId)
-        .get();
-    String documentId = studentSnapshot.docs.first.id;
-    
-    // Check if the user has already applied for this election
-   DocumentSnapshot<Map<String, dynamic>>? snapshot = await FirebaseFirestore.instance
-    .collection('tbl_class_candidate')
-    .where('student_id', isEqualTo: documentId)
-    .where('election_id', isEqualTo: eid)
-    .limit(1) // Limit to 1 document
-    .get()
-    .then((value) => value.docs.isNotEmpty ? value.docs.first : null);
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
+      QuerySnapshot<Map<String, dynamic>> studentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('tbl_studentregister')
+              .where('Student_id', isEqualTo: userId)
+              .get();
+      String documentId = studentSnapshot.docs.first.id;
 
-    print("Winner? : ${snapshot!.data()?['winner']}");
-    if (snapshot!.data()?['winner'] == 'true') {
-      // Document exists, show an error message
-      setState(() {
-        cgVote = true;
-      });
+      // Check if the user has already applied for this election
+      DocumentSnapshot<Map<String, dynamic>>? snapshot =
+          await FirebaseFirestore.instance
+              .collection('tbl_class_candidate')
+              .where('student_id', isEqualTo: documentId)
+              .where('election_id', isEqualTo: eid)
+              .limit(1) // Limit to 1 document
+              .get()
+              .then((value) => value.docs.isNotEmpty ? value.docs.first : null);
+
+      print("Winner? : ${snapshot!.data()?['winner']}");
+      if (snapshot.data()?['winner'] == 'true') {
+        // Document exists, show an error message
+        setState(() {
+          cgVote = true;
+        });
+      }
+    } catch (e) {
+      print("Error checking candidate status: $e");
     }
-  } catch (e) {
-    print("Error checking candidate status: $e");
-  }
   }
 
   void fetchDataFromFirestore() async {
@@ -266,7 +268,7 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ClassVoting()),
+                                builder: (context) => const ClassVoting()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -285,7 +287,9 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ViewClassCandidate(eId: eid,)),
+                              builder: (context) => ViewClassCandidate(
+                                    eId: eid,
+                                  )),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -299,7 +303,13 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewResult(eId: eid,),));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewResult(
+                                eId: eid,
+                              ),
+                            ));
                       },
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
@@ -318,7 +328,7 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ClassVoting()),
+                                builder: (context) => const ClassVoting()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

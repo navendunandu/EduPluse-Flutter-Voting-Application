@@ -55,7 +55,7 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('EDUPULSE'),
+        title: const Text('EDUPULSE'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -128,11 +128,11 @@ class _MyProfileState extends State<MyProfile> {
                         ),
                       );
                     },
-                    child: Column(
+                    child: const Column(
                       children: [
                         Icon(Icons.edit), // Icon for editing profile
-                        const SizedBox(height: 5),
-                        const Text('Edit Profile'),
+                        SizedBox(height: 5),
+                        Text('Edit Profile'),
                       ],
                     ),
                   ),
@@ -145,11 +145,11 @@ class _MyProfileState extends State<MyProfile> {
                         ),
                       );
                     },
-                    child: Column(
+                    child: const Column(
                       children: [
                         Icon(Icons.lock), // Icon for changing password
-                        const SizedBox(height: 5),
-                        const Text('Change Password'),
+                        SizedBox(height: 5),
+                        Text('Change Password'),
                       ],
                     ),
                   ),
@@ -157,11 +157,11 @@ class _MyProfileState extends State<MyProfile> {
                     onTap: () {
                       // Implement your logout logic here
                     },
-                    child: Column(
+                    child: const Column(
                       children: [
                         Icon(Icons.logout), // Icon for logout
-                        const SizedBox(height: 5),
-                        const Text('Logout'),
+                        SizedBox(height: 5),
+                        Text('Logout'),
                       ],
                     ),
                   ),

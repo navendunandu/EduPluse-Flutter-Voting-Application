@@ -41,27 +41,27 @@ class _ChangePasswordState extends State<ChangePassword> {
         TextFormField(
           controller: _oldpasswordController,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
           hintText:'Enter Your old password'
         ),
         ),
          TextFormField(
           controller: _newpasswordController,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
           hintText:'Enter Your new password'
         ),
         ),
          TextFormField(
           controller: _retypepasswordController,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
           hintText:'Retype Your new password'
         ),
         ),
         ElevatedButton(onPressed: (){
           ChangePassword();
-        },child:Text('CHANGE'))
+        },child:const Text('CHANGE'))
       ],
     ),
     ),

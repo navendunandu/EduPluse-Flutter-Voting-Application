@@ -5,22 +5,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
- const Dashboard({Key? key}) : super(key: key);
+  const Dashboard({Key? key}) : super(key: key);
 
- @override
- State<Dashboard> createState() => _DashboardState();
+  @override
+  State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
- String name = 'Loading...';
+  String name = 'Loading...';
 
- @override
- void initState() {
+  @override
+  void initState() {
     super.initState();
     getData();
- }
+  }
 
- Future<void> getData() async {
+  Future<void> getData() async {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
@@ -38,41 +38,41 @@ class _DashboardState extends State<Dashboard> {
         name = 'Error Loading Data';
       });
     }
- }
+  }
 
- @override
- Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               decoration: const BoxDecoration(
-                image: DecorationImage(image: AssetImage("assets/voter.jpg"))
-              ),
+                  image:
+                      DecorationImage(image: AssetImage("assets/voter.jpg"))),
               height: 300,
             ),
-           const Center(
-             child: Text(
+            const Center(
+              child: Text(
                 'Hello,',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-             ),
-           ),
-           Text(
-             name,
-             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-           ),
-           const SizedBox(height: 20),
-           GestureDetector(
-             onTap: () {
+              ),
+            ),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const ElectionDashboard(),
                   ),
                 );
-             },
-             child: Container(
+              },
+              child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   gradient: const LinearGradient(
@@ -102,19 +102,19 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-             ),
-           ),
-           const SizedBox(height: 20),
-           GestureDetector(
-             onTap: () {
+              ),
+            ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const MyProfile(),
                   ),
                 );
-             },
-             child: Container(
+              },
+              child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   gradient: const LinearGradient(
@@ -144,11 +144,11 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-             ),
-           ),
+              ),
+            ),
           ],
         ),
       ),
     );
- }
+  }
 }

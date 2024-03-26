@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ClassVoting extends StatefulWidget {
@@ -123,22 +122,22 @@ class _ClassVotingState extends State<ClassVoting> {
         // Add more fields as needed
       });
       Fluttertoast.showToast(
-          msg: "Vote Successfull",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-        );
+        msg: "Vote Successfull",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
       Navigator.pop(context);
     } catch (e) {
       print('Error Voting $e');
       Fluttertoast.showToast(
-          msg: "Voting Failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        msg: "Voting Failed",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -192,19 +191,19 @@ class _ClassVotingState extends State<ClassVoting> {
                             ),
                           ),
                         ),
-                              Flexible(
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  width: 100,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      print(candidate['document_id']);
-                                      vote(candidate['document_id']);
-                                    },
-                                    child: const Text('Vote'),
-                                  ),
-                                ),
-                              ),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            width: 100,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                print(candidate['document_id']);
+                                vote(candidate['document_id']);
+                              },
+                              child: const Text('Vote'),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   );

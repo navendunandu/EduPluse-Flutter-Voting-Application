@@ -49,7 +49,7 @@ class _ElectionState extends State<Election> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('EDUPULSE'),
+        title: const Text('EDUPULSE'),
         actions: [
           IconButton(
             onPressed: () {
@@ -60,7 +60,7 @@ class _ElectionState extends State<Election> {
                 ),
               );
             },
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
           )
         ],
       ),
@@ -81,27 +81,28 @@ class _ElectionState extends State<Election> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Date: ${electionData['election_for_date']}'),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   Text('${electionData['election_details']}'),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
                   Text(
                       'Last Date: ${electionData['election_nomination_ldate']}'),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     children: [
                       ElevatedButton(
-                          onPressed: () {}, child: Text('View Candidates')),
-                      SizedBox(
+                          onPressed: () {},
+                          child: const Text('View Candidates')),
+                      const SizedBox(
                         width: 20,
                       ),
                       ElevatedButton(
-                          onPressed: () {}, child: Text('View Results'))
+                          onPressed: () {}, child: const Text('View Results'))
                     ],
                   )
                 ],

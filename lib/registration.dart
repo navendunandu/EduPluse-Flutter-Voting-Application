@@ -89,7 +89,7 @@ class RegistrationState extends State<Registration> {
         _progressDialog.hide();
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Login()),
+          MaterialPageRoute(builder: (context) => const Login()),
         );
       }
     } catch (e) {
@@ -466,16 +466,16 @@ class RegistrationState extends State<Registration> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _pickFile,
-                          child: Text('Upload File'),
+                          child: const Text('Upload File'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   if (filePath != null)
                     Text(
                       'Selected File: $filePath',
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                 ],
               ),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ViewClassCandidate extends StatefulWidget {
-
   final String? eId;
 
   const ViewClassCandidate({Key? key, required this.eId}) : super(key: key);
@@ -19,7 +18,9 @@ class _ViewClassCandidateState extends State<ViewClassCandidate> {
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
-              .collection('tbl_class_candidate').where('election_id', isEqualTo: widget.eId).where('candidate_status', isGreaterThanOrEqualTo: 1)
+              .collection('tbl_class_candidate')
+              .where('election_id', isEqualTo: widget.eId)
+              .where('candidate_status', isGreaterThanOrEqualTo: 1)
               .get();
 
       for (var doc in querySnapshot.docs) {
@@ -70,32 +71,34 @@ class _ViewClassCandidateState extends State<ViewClassCandidate> {
   }
 
   Future<Map<String, dynamic>?> fetchStudent(String id) async {
-  Map<String, dynamic>? myClassDetails = await fetchMyClassDetails();
-  String? courseId = myClassDetails!['course_id'];
-  String? yearId = myClassDetails['year_id'];
+    Map<String, dynamic>? myClassDetails = await fetchMyClassDetails();
+    String? courseId = myClassDetails!['course_id'];
+    String? yearId = myClassDetails['year_id'];
 
-  try {
-    final studentSnapshot =
-        await FirebaseFirestore.instance.collection('tbl_studentregister').doc(id).get();
+    try {
+      final studentSnapshot = await FirebaseFirestore.instance
+          .collection('tbl_studentregister')
+          .doc(id)
+          .get();
 
-    if (studentSnapshot.exists) {
-      Map<String, dynamic> studentData = studentSnapshot.data()!;
-      // Check if the student belongs to the same course and year
-      if (studentData['year_id'] == yearId && studentData['course_id'] == courseId) {
-        return studentData; // Return student data if conditions are met
+      if (studentSnapshot.exists) {
+        Map<String, dynamic> studentData = studentSnapshot.data()!;
+        // Check if the student belongs to the same course and year
+        if (studentData['year_id'] == yearId &&
+            studentData['course_id'] == courseId) {
+          return studentData; // Return student data if conditions are met
+        } else {
+          return null;
+        }
       } else {
-        return null; 
+        print('Student with id $id does not exist');
+        return null; // Return null if student document doesn't exist
       }
-    } else {
-      print('Student with id $id does not exist');
-      return null; // Return null if student document doesn't exist
+    } catch (e) {
+      print("Error fetching student details: $e");
+      return null; // Return null if any error occurs
     }
-  } catch (e) {
-    print("Error fetching student details: $e");
-    return null; // Return null if any error occurs
   }
-}
-
 
   @override
   void initState() {

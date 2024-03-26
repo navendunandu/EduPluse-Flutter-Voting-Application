@@ -160,7 +160,7 @@ class _ViewResultState extends State<ViewResult> {
                           color: Colors.grey.withOpacity(0.5), // Shadow color
                           spreadRadius: 2, // Spread radius
                           blurRadius: 4, // Blur radius
-                          offset: Offset(0, 2), // Shadow offset
+                          offset: const Offset(0, 2), // Shadow offset
                         ),
                       ],
                     ),
@@ -195,14 +195,14 @@ class _ViewResultState extends State<ViewResult> {
                             Container(
                               padding: const EdgeInsets.only(
                                   top: 8, bottom: 8, left: 25, right: 25),
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.green, // Winner banner color
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
                                   bottomRight: Radius.circular(10),
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Winner',
                                 style: TextStyle(
                                   color:

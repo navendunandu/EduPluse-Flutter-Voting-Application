@@ -57,24 +57,24 @@ class EditProfileState extends State<EditProfile> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Text('User editprofile'),
+            const Text('User editprofile'),
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration(hintText: 'Enter Name'),
+              decoration: const InputDecoration(hintText: 'Enter Name'),
             ),
             TextFormField(
               controller: _contactController,
-              decoration: InputDecoration(hintText: 'Enter Contact'),
+              decoration: const InputDecoration(hintText: 'Enter Contact'),
             ),
             TextFormField(
               controller: _addressController,
-              decoration: InputDecoration(hintText: 'Enter Address'),
+              decoration: const InputDecoration(hintText: 'Enter Address'),
             ),
             ElevatedButton(
                 onPressed: () {
                   editprofile();
                 },
-                child: Text('Save'))
+                child: const Text('Save'))
           ],
         ),
       ),
