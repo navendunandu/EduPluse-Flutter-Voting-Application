@@ -1,6 +1,9 @@
+// ignore_for_file: avoid_print, avoid_function_literals_in_foreach_calls
+
 import 'package:edupulse/cg_candidate_app.dart';
 import 'package:edupulse/class_voting.dart';
 import 'package:edupulse/college_voting.dart';
+import 'package:edupulse/election_result.dart';
 import 'package:edupulse/view_candidate.dart';
 import 'package:edupulse/view_class_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -387,6 +390,23 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                             horizontal: 30, vertical: 15),
                       ),
                       child: const Text('Class Election Results'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ElectionResult(),
+                            ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text('College Election Results'),
                     ),
                     const SizedBox(height: 10),
                     if (eStatus == "1" &&

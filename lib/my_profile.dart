@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edupulse/change_password.dart';
 import 'package:edupulse/edit_profile.dart';
+import 'package:edupulse/forgot_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -141,7 +142,7 @@ class _MyProfileState extends State<MyProfile> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ChangePassword(),
+                          builder: (context) => const ForgotPassword(title: 'Change Password',),
                         ),
                       );
                     },
