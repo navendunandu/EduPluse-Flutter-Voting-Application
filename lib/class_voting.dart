@@ -23,13 +23,9 @@ class _ClassVotingState extends State<ClassVoting> {
               .get();
 
       for (var doc in querySnapshot.docs) {
-        String docId = doc.id; // Get the document ID
-        print('Document ID: $docId');
-
-        print(doc['student_id']);
+        String docId = doc.id; 
         Map<String, dynamic>? studentData =
             await fetchStudent(doc['student_id']);
-        print('Student details: $studentData');
 
         if (studentData != null) {
           Map<String, dynamic> combinedData = {
@@ -197,7 +193,6 @@ class _ClassVotingState extends State<ClassVoting> {
                             width: 100,
                             child: ElevatedButton(
                               onPressed: () {
-                                print(candidate['document_id']);
                                 vote(candidate['document_id']);
                               },
                               child: const Text('Vote'),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -13,6 +14,7 @@ class EditProfileState extends State<EditProfile> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _contactController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -44,10 +46,58 @@ class EditProfileState extends State<EditProfile> {
     }
   }
 
-  void editprofile() {
-    print(_nameController.text);
-    print(_contactController.text);
-    print(_addressController.text);
+  Future<void> editprofile() async {
+    if (_formKey.currentState!.validate()) {
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
+
+      if (userId != null) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('tbl_studentregister')
+              .where('Student_id', isEqualTo: userId)
+              .get()
+              .then((querySnapshot) {
+            if (querySnapshot.docs.isNotEmpty) {
+              final docId = querySnapshot.docs.first.id;
+              FirebaseFirestore.instance
+                  .collection('tbl_userregistration')
+                  .doc(docId)
+                  .update({
+                'user_name': _nameController.text,
+                'user_contact': _contactController.text,
+                'user_address': _addressController.text,
+              });
+              Fluttertoast.showToast(
+        msg: "Profile updated successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+            }
+          });
+        } catch (e) {
+          Fluttertoast.showToast(
+        msg: "Error",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+          print('Error updating document: $e');
+        }
+      } else {
+        Fluttertoast.showToast(
+        msg: "User ID is null",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+        print('User ID is null');
+      }
+    }
   }
 
   @override
@@ -55,27 +105,30 @@ class EditProfileState extends State<EditProfile> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const Text('User editprofile'),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(hintText: 'Enter Name'),
-            ),
-            TextFormField(
-              controller: _contactController,
-              decoration: const InputDecoration(hintText: 'Enter Contact'),
-            ),
-            TextFormField(
-              controller: _addressController,
-              decoration: const InputDecoration(hintText: 'Enter Address'),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  editprofile();
-                },
-                child: const Text('Save'))
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const Text('User editprofile'),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(hintText: 'Enter Name'),
+              ),
+              TextFormField(
+                controller: _contactController,
+                decoration: const InputDecoration(hintText: 'Enter Contact'),
+              ),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(hintText: 'Enter Address'),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    editprofile();
+                  },
+                  child: const Text('Save'))
+            ],
+          ),
         ),
       ),
     );

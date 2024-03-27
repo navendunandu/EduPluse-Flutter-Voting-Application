@@ -1,4 +1,6 @@
+import 'package:edupulse/cg_candidate_app.dart';
 import 'package:edupulse/class_voting.dart';
+import 'package:edupulse/college_voting.dart';
 import 'package:edupulse/view_candidate.dart';
 import 'package:edupulse/view_class_result.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,6 +26,8 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
 
   bool cVote = false;
   bool cgVote = false;
+  bool cgApply = false;
+  bool clApply = false;
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -54,30 +58,95 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final userId = user?.uid;
+      QuerySnapshot studentSnapshot = await firestore
+          .collection('tbl_studentregister')
+          .where('Student_id', isEqualTo: userId)
+          .get();
+      String documentId = studentSnapshot.docs.first.id;
+      final result = await FirebaseFirestore.instance
+          .collection('tbl_college_polling')
+          .where('student_id', isEqualTo: documentId)
+          .get();
+      if (result.docs.isEmpty) {
+        setState(() {
+          cgVote = true;
+        });
+      }
+    } catch (e) {
+      print('Error checking vote: $e');
+    }
+  }
+
+  Future<void> cgApp() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
       QuerySnapshot<Map<String, dynamic>> studentSnapshot =
           await FirebaseFirestore.instance
               .collection('tbl_studentregister')
               .where('Student_id', isEqualTo: userId)
               .get();
       String documentId = studentSnapshot.docs.first.id;
+//Start
 
+      QuerySnapshot snapshotCand = await firestore
+          .collection('tbl_college_candidate')
+          .where('student_id', isEqualTo: documentId)
+          .where('status', isEqualTo: 1)
+          .get();
+
+      if (snapshotCand.docs.isEmpty) {
+        // Document already exists, show an error message
+        // _progressDialog.hide();
+        DocumentSnapshot<Map<String, dynamic>>? snapshot =
+            await FirebaseFirestore.instance
+                .collection('tbl_class_candidate')
+                .where('student_id', isEqualTo: documentId)
+                .where('election_id', isEqualTo: eid)
+                .limit(1) // Limit to 1 document
+                .get()
+                .then(
+                    (value) => value.docs.isNotEmpty ? value.docs.first : null);
+
+        if (snapshot!.data()?['winner'] == 'true') {
+          // Document exists, show an error message
+          setState(() {
+            cgApply = true;
+          });
+        }
+      }
       // Check if the user has already applied for this election
-      DocumentSnapshot<Map<String, dynamic>>? snapshot =
-          await FirebaseFirestore.instance
-              .collection('tbl_class_candidate')
-              .where('student_id', isEqualTo: documentId)
-              .where('election_id', isEqualTo: eid)
-              .limit(1) // Limit to 1 document
-              .get()
-              .then((value) => value.docs.isNotEmpty ? value.docs.first : null);
+    } catch (e) {
+      print("Error checking candidate status: $e");
+    }
+  }
 
-      print("Winner? : ${snapshot!.data()?['winner']}");
-      if (snapshot.data()?['winner'] == 'true') {
-        // Document exists, show an error message
+  Future<void> clApp() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final userId = user?.uid;
+      QuerySnapshot<Map<String, dynamic>> studentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('tbl_studentregister')
+              .where('Student_id', isEqualTo: userId)
+              .get();
+      String documentId = studentSnapshot.docs.first.id;
+//Start
+
+      QuerySnapshot snapshotCand = await firestore
+          .collection('tbl_class_candidate')
+          .where('student_id', isEqualTo: documentId)
+          .get();
+
+      if (snapshotCand.docs.isEmpty) {
+        // Document already exists, show an error message
+        // _progressDialog.hide();
+
         setState(() {
-          cgVote = true;
+          clApply = true;
         });
       }
+      // Check if the user has already applied for this election
     } catch (e) {
       print("Error checking candidate status: $e");
     }
@@ -103,8 +172,6 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
           elastDate = doc['election_nomination_ldate'];
           eStatus = doc['election_status'].toString();
         });
-        print(eStatus);
-        // Access other fields similarly
       });
     } catch (e) {
       print('Error fetching data: $e');
@@ -177,6 +244,7 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
     fetchDataFromFirestore();
     cVoteCheck();
     cgVoteCheck();
+    cgApp();
     // _progressDialog = ProgressDialog(context);
   }
 
@@ -248,27 +316,28 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        applyCandidate();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 15),
+                    if (clApply)
+                      ElevatedButton(
+                        onPressed: () {
+                          applyCandidate();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
+                        ),
+                        child: const Text('Apply for Election'),
                       ),
-                      child: const Text('Apply for Election'),
-                    ),
                     const SizedBox(height: 10),
-                    if (cgVote) // Checking if eStatus equals 1
+                    if (cgApply) // Checking if eStatus equals 1
                       ElevatedButton(
                         // Creating an ElevatedButton widget
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ClassVoting()),
+                                builder: (context) => const CgCandApp()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -321,7 +390,7 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                     ),
                     const SizedBox(height: 10),
                     if (eStatus == "1" &&
-                        cVote == true) // Checking if eStatus equals 1
+                        cVote) // Checking if eStatus equals 1
                       ElevatedButton(
                         // Creating an ElevatedButton widget
                         onPressed: () {
@@ -329,6 +398,27 @@ class _ElectionDashboardState extends State<ElectionDashboard> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const ClassVoting()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white, // Text color
+                          backgroundColor:
+                              Colors.blue, // Button background color
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15), // Button padding
+                        ),
+                        child: const Text(
+                            'Vote'), // Text displayed inside the button
+                      ),
+                    const SizedBox(height: 10),
+                    if (eStatus == "1" && cgVote) // Checking if eStatus equals 1
+                      ElevatedButton(
+                        // Creating an ElevatedButton widget
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ClgVoting()),
                           );
                         },
                         style: ElevatedButton.styleFrom(

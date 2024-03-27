@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison, avoid_print, use_build_context_synchronously, avoid_function_literals_in_foreach_calls
+
 import 'dart:io';
 import 'package:edupulse/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -222,7 +224,6 @@ class RegistrationState extends State<Registration> {
 
   Future<void> fetchCourseData(id) async {
     try {
-      print(id);
 
       QuerySnapshot<Map<String, dynamic>> querySnapshot1 =
           await FirebaseFirestore.instance
@@ -244,12 +245,6 @@ class RegistrationState extends State<Registration> {
       print('Error fetching course data: $e');
     }
   }
-
-  List<String> courses = ['BCA', 'BBA', 'B.Com'];
-  String? selectedCourse;
-
-  List<String> years = ['2021-2024', '2022-2025', '2023-2026'];
-  String? selectedYear;
 
   String? selectedGender;
 
@@ -486,13 +481,13 @@ class RegistrationState extends State<Registration> {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: register,
-                child: const Text('Register'),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
+                child: const Text('Register'),
               ),
             ],
           ),
@@ -517,28 +512,5 @@ class RegistrationState extends State<Registration> {
     );
   }
 
-  Widget _buildIconDropdownField(IconData icon, String? value, String hintText,
-      List<String> items, void Function(String?) onChanged) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: Icon(icon),
-        border: const OutlineInputBorder(),
-      ),
-      onChanged: onChanged,
-      items: items.map<DropdownMenuItem<String>>((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-    );
-  }
 }
 
-void main() {
-  runApp(const MaterialApp(
-    home: Registration(),
-  ));
-}

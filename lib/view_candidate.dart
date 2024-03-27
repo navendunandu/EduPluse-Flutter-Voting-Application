@@ -24,10 +24,8 @@ class _ViewClassCandidateState extends State<ViewClassCandidate> {
               .get();
 
       for (var doc in querySnapshot.docs) {
-        print(doc['student_id']);
         Map<String, dynamic>? studentData =
             await fetchStudent(doc['student_id']);
-        print('Student details: $studentData');
 
         if (studentData != null) {
           Map<String, dynamic> combinedData = {

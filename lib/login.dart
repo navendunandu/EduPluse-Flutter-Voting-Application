@@ -62,17 +62,12 @@ class _LoginState extends State<Login> {
         password: _passwordController.text.trim(),
       );
 
-      print(userCredential.user?.uid);
-
       String? studentId = userCredential.user?.uid;
       if (studentId != null) {
         int? studentStatus = await fetchStudentStatus(studentId);
-        print('Student Status: $studentStatus');
         if (studentStatus != null) {
           _progressDialog.hide();
 
-          // Use studentStatus as needed
-          print('Student Status: $studentStatus');
           if (studentStatus == 0) {
             Fluttertoast.showToast(
               msg: 'Account not verified',

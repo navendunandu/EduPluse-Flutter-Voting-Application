@@ -35,9 +35,6 @@ class _ElectionState extends State<Election> {
         electionList.add(doc.data()! as Map<String, dynamic>);
       });
 
-      // Print the list for testing (you can remove this in the final version)
-      print(electionList);
-
       // setState to rebuild the UI with the fetched data
       setState(() {});
     } catch (e) {
