@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -18,7 +17,7 @@ class _ElectionResultState extends State<ElectionResult> {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('tbl_college_candidate')
-              .where('status', isGreaterThanOrEqualTo: 1)
+              .where('status', isGreaterThanOrEqualTo: 0)
               .get();
 
       for (var doc in querySnapshot.docs) {
@@ -111,7 +110,7 @@ class _ElectionResultState extends State<ElectionResult> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Class Candidates'),
+        title: const Text('College Election Result'),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchClassCandidates(),

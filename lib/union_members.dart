@@ -1,37 +1,34 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ViewResult extends StatefulWidget {
-  final String? eId;
-
-  const ViewResult({Key? key, required this.eId}) : super(key: key);
+class UnionMembers extends StatefulWidget {
+  const UnionMembers({Key? key}) : super(key: key);
 
   @override
-  State<ViewResult> createState() => _ViewResultState();
+  State<UnionMembers> createState() => _UnionMembersState();
 }
 
-class _ViewResultState extends State<ViewResult> {
+class _UnionMembersState extends State<UnionMembers> {
   List<Map<String, dynamic>> classCandidates = [];
   Future<List<Map<String, dynamic>>> fetchClassCandidates() async {
     classCandidates = [];
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
-              .collection('tbl_class_candidate')
-              .where('election_id', isEqualTo: widget.eId)
-              .where('candidate_status', isGreaterThanOrEqualTo: 1)
+              .collection('tbl_college_candidate')
+              .where('status', isGreaterThanOrEqualTo: 1)
+              .where('winner', isEqualTo: 'true')
               .get();
 
       for (var doc in querySnapshot.docs) {
         Map<String, dynamic>? studentData =
             await fetchStudent(doc['student_id']);
         if (studentData != null) {
-          int voteCount = await fetchVoteCount(doc.id);
+          String? position = await getPosition(doc['position_id']);
           Map<String, dynamic> combinedData = {
             ...doc.data(), // Spread the data from the document
-            ...studentData, // Spread the student data
-            'vote_count': voteCount,
+            ...studentData, 
+            'position': position,
           };
           classCandidates.add(combinedData);
         }
@@ -43,37 +40,7 @@ class _ViewResultState extends State<ViewResult> {
     return classCandidates;
   }
 
-  Future<Map<String, dynamic>?> fetchMyClassDetails() async {
-    Map<String, dynamic> details = {};
-
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      final userId = user?.uid;
-      QuerySnapshot<Map<String, dynamic>> docSnapshot = await FirebaseFirestore
-          .instance
-          .collection('tbl_studentregister')
-          .where('Student_id', isEqualTo: userId)
-          .limit(1)
-          .get();
-
-      if (docSnapshot.docs.isNotEmpty) {
-        details['course_id'] = docSnapshot.docs.first['course_id'];
-        details['year_id'] = docSnapshot.docs.first['year_id'];
-      } else {
-        print("No such document!");
-      }
-    } catch (e) {
-      print("Error fetching class details: $e");
-    }
-
-    return details;
-  }
-
   Future<Map<String, dynamic>?> fetchStudent(String id) async {
-    Map<String, dynamic>? myClassDetails = await fetchMyClassDetails();
-    String? courseId = myClassDetails!['course_id'];
-    String? yearId = myClassDetails['year_id'];
-
     try {
       final studentSnapshot = await FirebaseFirestore.instance
           .collection('tbl_studentregister')
@@ -82,13 +49,8 @@ class _ViewResultState extends State<ViewResult> {
 
       if (studentSnapshot.exists) {
         Map<String, dynamic> studentData = studentSnapshot.data()!;
-        // Check if the student belongs to the same course and year
-        if (studentData['year_id'] == yearId &&
-            studentData['course_id'] == courseId) {
-          return studentData; // Return student data if conditions are met
-        } else {
-          return null;
-        }
+
+        return studentData; // Return student data if conditions are met
       } else {
         print('Student with id $id does not exist');
         return null; // Return null if student document doesn't exist
@@ -99,19 +61,23 @@ class _ViewResultState extends State<ViewResult> {
     }
   }
 
-  Future<int> fetchVoteCount(String candidateId) async {
+  Future<String?> getPosition(String id) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> pollingSnapshot =
+      DocumentSnapshot<Map<String, dynamic>> positionSnapshot =
           await FirebaseFirestore.instance
-              .collection('tbl_classpolling')
-              .where('candidate_id', isEqualTo: candidateId)
-              .where('polling_status', isEqualTo: 1)
+              .collection('tbl_position')
+              .doc(id)
               .get();
-
-      return pollingSnapshot.size;
+      if (positionSnapshot.exists) {
+        String position = positionSnapshot['position_name'];
+        return position;
+      } else {
+        print("Position document with ID $id does not exist");
+        return null;
+      }
     } catch (e) {
-      print("Error fetching vote count: $e");
-      return 0; // Return 0 if any error occurs
+      print("Error fetching Position name: $e");
+      return null;
     }
   }
 
@@ -124,7 +90,7 @@ class _ViewResultState extends State<ViewResult> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Class Election Result'),
+        title: const Text('Union Members'),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: fetchClassCandidates(),
@@ -136,7 +102,7 @@ class _ViewResultState extends State<ViewResult> {
           } else {
             // Check if the list is empty
             if (snapshot.data == null || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No candidates applied.'));
+              return const Center(child: Text('No Union Members'));
             } else {
               return GridView.builder(
                 padding: const EdgeInsets.all(20),
@@ -183,35 +149,14 @@ class _ViewResultState extends State<ViewResult> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Votes: ${candidate['vote_count']}",
+                            "Position: ${candidate['position']}",
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (candidate['winner'] ==
-                              'true') // Check if candidate is a winner
-                            Container(
-                              padding: const EdgeInsets.only(
-                                  top: 8, bottom: 8, left: 25, right: 25),
-                              decoration: const BoxDecoration(
-                                color: Colors.green, // Winner banner color
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                'Winner',
-                                style: TextStyle(
-                                  color:
-                                      Colors.white, // Winner banner text color
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          const SizedBox(height: 10),
+                          
                         ],
                       ),
                     ),

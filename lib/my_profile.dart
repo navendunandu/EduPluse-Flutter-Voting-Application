@@ -73,6 +73,7 @@ class _MyProfileState extends State<MyProfile> {
               ),
               const Text(
                 'My Profile',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 20,
                     fontStyle: FontStyle.italic,
@@ -154,18 +155,7 @@ class _MyProfileState extends State<MyProfile> {
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      // Implement your logout logic here
-                    },
-                    child: const Column(
-                      children: [
-                        Icon(Icons.logout), // Icon for logout
-                        SizedBox(height: 5),
-                        Text('Logout'),
-                      ],
-                    ),
-                  ),
+                  
                 ],
               ),
             ],

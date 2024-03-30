@@ -85,7 +85,7 @@ class _LoginState extends State<Login> {
               textColor: Colors.white,
             );
           } else {
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const Dashboard(),
@@ -93,7 +93,13 @@ class _LoginState extends State<Login> {
           }
         } else {
           _progressDialog.hide();
-
+ Fluttertoast.showToast(
+              msg: 'Something Went Wrong',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+            );
           print('Failed to fetch student status.');
         }
       }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +13,9 @@ class EditProfile extends StatefulWidget {
 }
 
 class EditProfileState extends State<EditProfile> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _contactController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,15 +35,15 @@ class EditProfileState extends State<EditProfile> {
         .get();
     if (querySnapshot.docs.isNotEmpty) {
       setState(() {
-        _nameController = querySnapshot.docs.first['Student_name'];
-        _contactController = querySnapshot.docs.first['Student_contact'];
-        _addressController = querySnapshot.docs.first['Student_address'];
+        _nameController.text = querySnapshot.docs.first['Student_name'];
+        _contactController.text = querySnapshot.docs.first['Student_contact'];
+        _addressController.text = querySnapshot.docs.first['Student_address'];
       });
     } else {
       setState(() {
-        _nameController = 'Error Loading Data' as TextEditingController;
-        _contactController = 'Error Loading Data' as TextEditingController;
-        _addressController = 'Error Loading Data' as TextEditingController;
+        _nameController.text = 'Error Loading Data';
+        _contactController.text = 'Error Loading Data';
+        _addressController.text = 'Error Loading Data';
       });
     }
   }
@@ -61,12 +63,12 @@ class EditProfileState extends State<EditProfile> {
             if (querySnapshot.docs.isNotEmpty) {
               final docId = querySnapshot.docs.first.id;
               FirebaseFirestore.instance
-                  .collection('tbl_userregistration')
+                  .collection('tbl_studentregister')
                   .doc(docId)
                   .update({
-                'user_name': _nameController.text,
-                'user_contact': _contactController.text,
-                'user_address': _addressController.text,
+                'Student_name': _nameController.text,
+                'Student_contact': _contactController.text,
+                'Student_address': _addressController.text,
               });
               Fluttertoast.showToast(
         msg: "Profile updated successfully",
@@ -103,31 +105,48 @@ class EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const Text('User editprofile'),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(hintText: 'Enter Name'),
-              ),
-              TextFormField(
-                controller: _contactController,
-                decoration: const InputDecoration(hintText: 'Enter Contact'),
-              ),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(hintText: 'Enter Address'),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    editprofile();
-                  },
-                  child: const Text('Save'))
-            ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 50,
+                ),
+                const Text('User editprofile'),
+                const SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(hintText: 'Enter Name'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _contactController,
+                  decoration: const InputDecoration(hintText: 'Enter Contact'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: const InputDecoration(hintText: 'Enter Address'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      editprofile();
+                    },
+                    child: const Text('Save'))
+              ],
+            ),
           ),
         ),
       ),

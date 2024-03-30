@@ -13,6 +13,7 @@ class ClgVoting extends StatefulWidget {
 class _ClgVotingState extends State<ClgVoting> {
   late Future<List<Map<String, dynamic>>> positionData = Future.value([]);
   List<String> selectedDropdowns = [];
+  int positionCount = 0;
 
   @override
   void initState() {
@@ -25,6 +26,9 @@ class _ClgVotingState extends State<ClgVoting> {
       List<Map<String, dynamic>> dataList = [];
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance.collection('tbl_position').get();
+          setState(() {
+            positionCount=querySnapshot.size;
+          });
       for (var doc in querySnapshot.docs) {
         List<Map<String, dynamic>> candidates = await fetchCandidates(doc.id);
         Map<String, dynamic> datas = {
@@ -124,61 +128,85 @@ class _ClgVotingState extends State<ClgVoting> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Election'),
-      ),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: positionData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            List<Map<String, dynamic>> positions = snapshot.data ?? [];
-            return ListView.builder(
-              itemCount: positions.length,
-              itemBuilder: (context, index) {
-                Map<String, dynamic> position = positions[index];
-                List<Map<String, dynamic>> candidates =
-                    position['candidates'] ?? [];
-                return ListTile(
-                  title: Text(position['position_name']),
-                  subtitle: DropdownButtonFormField<String>(
-                    items: selectedDropdowns.contains(position['position_id'])
-                        ? [] // If the dropdown has been selected, show an empty list
-                        : candidates.map<DropdownMenuItem<String>>((candidate) {
-                            return DropdownMenuItem<String>(
-                              value: candidate['id'],
-                              child: Text(candidate['name']),
-                            );
-                          }).toList(),
-                    onChanged: selectedDropdowns
-                            .contains(position['position_id'])
-                        ? null // Disable the dropdown if the position ID is in selectedDropdowns
-                        : (String? newValue) {
-                            if (newValue != null) {
-                              setState(() {
-                                selectedDropdowns.add(position['position_id']);
-                              });
-                              vote(newValue, position['position_name']);
-                            }
-                          },
-                    hint: selectedDropdowns.contains(position['position_id'])
-                        ? const Text(
-                            'Voted') // Show "Voted" as a hint when the dropdown is disabled
-                        : null,
-                  ),
-                );
-              },
-            );
-          }
-        },
+    return WillPopScope(
+      onWillPop: () async {
+      if (selectedDropdowns.length != positionCount) {
+        // If the number of selected dropdowns is not equal to the position count, prevent going back
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Warning'),
+            content: Text('You cannot go back without completing the votes.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        return false; // Prevent popping the route
+      }
+      return true; // Allow popping the route
+    },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Election'),
+        ),
+        body: FutureBuilder<List<Map<String, dynamic>>>(
+          future: positionData,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            } else {
+              List<Map<String, dynamic>> positions = snapshot.data ?? [];
+              return ListView.builder(
+                itemCount: positions.length,
+                itemBuilder: (context, index) {
+                  Map<String, dynamic> position = positions[index];
+                  List<Map<String, dynamic>> candidates =
+                      position['candidates'] ?? [];
+                  return ListTile(
+                    title: Text(position['position_name']),
+                    subtitle: DropdownButtonFormField<String>(
+                      items: selectedDropdowns.contains(position['position_id'])
+                          ? [] // If the dropdown has been selected, show an empty list
+                          : candidates.map<DropdownMenuItem<String>>((candidate) {
+                              return DropdownMenuItem<String>(
+                                value: candidate['id'],
+                                child: Text(candidate['name']),
+                              );
+                            }).toList(),
+                      onChanged: selectedDropdowns
+                              .contains(position['position_id'])
+                          ? null // Disable the dropdown if the position ID is in selectedDropdowns
+                          : (String? newValue) {
+                              if (newValue != null) {
+                                setState(() {
+                                  selectedDropdowns.add(position['position_id']);
+                                });
+                                vote(newValue, position['position_name']);
+                              }
+                            },
+                      hint: selectedDropdowns.contains(position['position_id'])
+                          ? const Text(
+                              'Voted') // Show "Voted" as a hint when the dropdown is disabled
+                          : null,
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }

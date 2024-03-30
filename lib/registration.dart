@@ -308,59 +308,65 @@ class RegistrationState extends State<Registration> {
               const SizedBox(height: 10),
               _buildIconTextField(Icons.phone, _contactController, 'Contact'),
               const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Gender: ',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
-                  ),
-                  Row(
-                    children: [
-                      Radio<String>(
-                        activeColor: Colors.blue,
-                        value: 'Male',
-                        groupValue: selectedGender,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGender = value!;
-                          });
-                        },
-                      ),
-                      const Text('Male')
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Radio<String>(
-                        activeColor: Colors.blue,
-                        value: 'Female',
-                        groupValue: selectedGender,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGender = value!;
-                          });
-                        },
-                      ),
-                      const Text('Female')
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Radio<String>(
-                        activeColor: Colors.blue,
-                        value: 'Others',
-                        groupValue: selectedGender,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedGender = value!;
-                          });
-                        },
-                      ),
-                      const Text('Others')
-                    ],
-                  ),
-                ],
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all()
+                ),
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Gender: ',
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+                    ),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.blue,
+                          value: 'Male',
+                          groupValue: selectedGender,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Male')
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.blue,
+                          value: 'Female',
+                          groupValue: selectedGender,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Female')
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          activeColor: Colors.blue,
+                          value: 'Others',
+                          groupValue: selectedGender,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Others')
+                      ],
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               _buildIconTextField(Icons.home, _addressController, 'Address',
@@ -461,7 +467,7 @@ class RegistrationState extends State<Registration> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: _pickFile,
-                          child: const Text('Upload File'),
+                          child: const Text('Upload Proof'),
                         ),
                       ),
                     ],
